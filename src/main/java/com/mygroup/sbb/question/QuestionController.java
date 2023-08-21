@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.mygroup.sbb.answer.AnswerForm;
+import com.mygroup.sbb.chatgpt.ChatGptMessageService;
 import com.mygroup.sbb.user.SiteUser;
 import com.mygroup.sbb.user.UserService;
 
@@ -32,6 +33,7 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final UserService userService;
+    private final ChatGptMessageService chatGptMessageService;
 
     @GetMapping("/list")
     public String list(Model model,@RequestParam(value="page", defaultValue="0") int page) {
@@ -60,7 +62,8 @@ public class QuestionController {
             return "question_form";
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
+        Question question = this.questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
+        this.chatGptMessageService.sendMessage(question);
         return "redirect:/question/list"; // 질문 저장후 질문목록으로 이동
     }
 
