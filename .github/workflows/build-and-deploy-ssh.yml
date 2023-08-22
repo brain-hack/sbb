@@ -76,6 +76,7 @@ jobs:
           envs: GHCR_TOKEN
           script: |
             whoami
+            echo ${GHCR_TOKEN}
             docker login ghcr.io --username ${{ env.OWNER_LC }} --password ${GHCR_TOKEN}
       - name: Deploy
         uses: appleboy/ssh-action@master
